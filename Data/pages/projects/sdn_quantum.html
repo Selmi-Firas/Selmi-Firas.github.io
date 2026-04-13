@@ -1,0 +1,68 @@
+<hr>
+
+<div id="mapex_title">SDN — Distributed Quantum</div>
+<br>
+
+<div id="mapex_tldr">
+    <img src="https://img.shields.io/badge/Category-Quantum%20Networking-blueviolet" alt="category"/>
+    <img src="https://img.shields.io/badge/Simulator-NetSquid-blue" alt="simulator"/>
+    <img src="https://img.shields.io/badge/Language-Python-yellow" alt="language"/>
+    <img src="https://img.shields.io/badge/Algorithm-Shor--15-red" alt="algorithm"/>
+    <img src="https://img.shields.io/badge/Result-%2B7%25%20Success%20Rate-brightgreen" alt="result"/>
+</div>
+
+<div id="mapex_body">
+<div class="mapex_text" style="max-width:820px; margin:0 auto; text-align:center; padding:0 20px; line-height:1.9;">
+
+    <br>
+    Designed and implemented a <strong>7-module SDN controller</strong> for orchestrating distributed quantum computing workloads
+    across a heterogeneous network of quantum nodes simulated using <strong>NetSquid</strong>.
+    The system was validated by executing <strong>Shor's algorithm (N=15)</strong> — factoring 15 into 3 × 5 —
+    across the distributed topology, achieving a <strong>+7% improvement in success rate</strong> over a hardware-blind greedy baseline.
+    <br><br>
+
+    <span style="color:#00a1ff;">— Why Distributed Quantum Computing? —</span><br><br>
+    Current quantum hardware is limited by the number of physical qubits a single device can reliably host.
+    Distributing a quantum circuit across multiple networked nodes — connected via quantum entanglement and teleportation —
+    allows algorithms that exceed single-device capacity. However, this introduces a fundamental challenge:
+    each link and node is a stochastic source of noise. A naive, hardware-blind scheduler fails
+    because it cannot account for varying coherence times, fiber attenuation, and per-node SPAM errors.
+    The SDN controller solves this by treating the quantum network like a classical SDN: monitoring hardware state in real time and making intelligent routing decisions.
+    <br><br>
+
+    <span style="color:#00a1ff;">— Network Topology —</span><br><br>
+    A 17-node star topology was constructed in NetSquid with a central switch and 16 leaf nodes. Every node received randomized hardware parameters: T&#8322; coherence time (range: 5 µs to 1 s), photon emission fidelity, SPAM error rates, and fiber segment lengths (5–20 km). Node-16 was deliberately force-degraded (T&#8322; = 5 µs) to stress-test the controller's fault tolerance. Fiber segments include realistic photon loss modelled via exponential attenuation.
+    <br><br>
+
+    <span style="color:#00a1ff;">— Controller Boot Phase —</span><br><br>
+    Before any circuit execution, the controller runs a full hardware scan:
+    <br><br>
+    <div style="display:inline-block; text-align:left; max-width:700px;">
+        <div style="margin-bottom:10px;"><strong>Test 1 — Local Coherence Test:</strong> For every node, a Bell state is created between two memory slots, allowed to decohere for 2000 ns, then measured. A healthy node (T&#8322; = 1 s) loses &lt;0.001 fidelity. Node-16 (T&#8322; = 5 µs) loses ~33% in the same window.</div>
+        <div style="margin-bottom:10px;"><strong>Test 2 — Fiber Delivery Test:</strong> For every link on every node, a photon is fired and the Bell pair fidelity measured after traveling through the real fiber channel — capturing the combined effect of attenuation, background noise, and emission quality.</div>
+        <div style="margin-bottom:10px;"><strong>Quality Score:</strong> final-score = 0.50 × initial + 0.25 × hw-fidelity + 0.25 × link-fidelity. Node-16 scores ~0.14. Healthy nodes score 0.89–0.96. Any node below the usability threshold is excluded.</div>
+        <div style="margin-bottom:10px;"><strong>Watchdog:</strong> Sets LINK-HEALTHY / LINK-DEAD binary alerts per link. Dead links are never used for teleportation.</div>
+        <div style="margin-bottom:10px;"><strong>NodeAssigner:</strong> The 8 highest-scoring surviving nodes are assigned to work-0..3 and count-0..3 registers.</div>
+    </div>
+    <br>
+
+    <span style="color:#00a1ff;">— Circuit Execution: Shor-15 —</span><br><br>
+    <div style="display:inline-block; text-align:left; max-width:700px;">
+        <div style="margin-bottom:10px;"><strong>init:</strong> Hadamard gates applied locally to all 4 count qubits — no teleportation needed.</div>
+        <div style="margin-bottom:10px;"><strong>CU0 / CU1:</strong> Work and count qubits are teleported to the central switch using EDF scheduling (tightest coherence deadline first). If Bell pair fidelity &lt; 0.92, DEJMPS purification runs using Link B as ancilla — sacrificing a second Bell pair to improve the first. The 5-qubit CU gate is then applied at the switch where all qubits are co-located.</div>
+        <div style="margin-bottom:10px;"><strong>iQFT:</strong> Count qubits teleported to switch, all iQFT gates (SWAP, H, CP) applied at the switch, then teleported back.</div>
+        <div style="margin-bottom:10px;"><strong>Measure &amp; Post-Processing:</strong> 4 counting qubits measured at leaf nodes. Continued fraction expansion of m/16 gives candidate period r. If r is even and a^(r/2) &#8802; -1 mod 15: factor-1 = gcd(a^(r/2)-1, 15), factor-2 = gcd(a^(r/2)+1, 15). Success = {3, 5}.</div>
+        <div style="margin-bottom:10px;"><strong>RecoveryEngine:</strong> Each run's result, node assignment, and per-stage fidelity are recorded. Nodes that caused &#8805;2 failures are blacklisted. The next run's NodeAssigner reads this updated ranking.</div>
+    </div>
+    <br>
+
+    <span style="color:#00a1ff;">— Baseline Comparison —</span><br><br>
+    The baseline (baseline.py) correctly executes all quantum operations — Bell pair generation, BSM, Pauli corrections, gate application — but lacks all SDN intelligence: no Monitor, no Watchdog, no quality scoring, no EDF scheduling, no DEJMPS purification, no RecoveryEngine. It always picks the same nearest nodes regardless of their hardware state. The SDN controller achieved a <strong>+7% higher Shor-15 success rate</strong>, demonstrating that state-aware orchestration is a fundamental requirement for deep-circuit distributed quantum algorithms.
+    <br><br>
+
+    <span style="color:#00a1ff;">— Technologies —</span><br><br>
+    Python &nbsp;&#8226;&nbsp; NetSquid &nbsp;&#8226;&nbsp; SDN &nbsp;&#8226;&nbsp; Bell Pairs &nbsp;&#8226;&nbsp; Quantum Teleportation &nbsp;&#8226;&nbsp;
+    DEJMPS Purification &nbsp;&#8226;&nbsp; EDF Scheduling &nbsp;&#8226;&nbsp; Shor's Algorithm &nbsp;&#8226;&nbsp; BSM &nbsp;&#8226;&nbsp; Pauli Corrections
+
+</div>
+</div>

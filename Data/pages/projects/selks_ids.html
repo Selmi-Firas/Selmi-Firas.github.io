@@ -1,0 +1,78 @@
+<hr>
+
+<div id="mapex_title">SELKS — IDS / IPS</div>
+<br>
+
+<div id="mapex_tldr">
+    <img src="https://img.shields.io/badge/Category-Network%20Security-red" alt="category"/>
+    <img src="https://img.shields.io/badge/IDS-SELKS%20%7C%20Suricata-blue" alt="ids"/>
+    <img src="https://img.shields.io/badge/IPS-pfSense%20%7C%20Suricata-orange" alt="ips"/>
+    <img src="https://img.shields.io/badge/Isolation-Docker%20macVLAN-green" alt="docker"/>
+</div>
+
+<div id="mapex_body">
+<div class="mapex_text" style="max-width:820px; margin:0 auto; text-align:center; padding:0 20px; line-height:1.9;">
+
+    <br>
+    Deployed a dual-layer intrusion detection and prevention system using <strong>SELKS</strong> for network intrusion detection (IDS)
+    and <strong>Suricata on pfSense</strong> for active intrusion prevention (IPS) — providing layered security coverage
+    for a live enterprise network.
+    <br><br>
+
+    <span style="color:#00a1ff;">— What is SELKS? —</span><br><br>
+    SELKS is a Linux-based security platform developed by Stamus Networks, built around Suricata as its core detection engine.
+    It integrates the full ELK Stack (Elasticsearch, Logstash, Kibana), Scirius for rule management, Arkime for pcap ingestion and visualization, and EveBox for additional alert dashboards.
+    SELKS provides NSM (Network Security Monitoring) and ESM (Enterprise Security Monitoring) capabilities from a single, cohesive interface.
+    <br><br>
+
+    <span style="color:#00a1ff;">— IDS Deployment: SELKS on Proxmox —</span><br><br>
+    SELKS was installed on a Proxmox VM (400 GB disk, 2 CPU cores, 10 GB RAM).
+    The installation uses a unique method: after a standard OS install, a <code>FirstTimeSetup</code> file is executed from the desktop terminal — this script installs and configures all SELKS components automatically.
+    SELKS sensors were positioned at the network perimeter, the DMZ boundary, and key server segments to capture all relevant traffic.
+    The Scirius rule management interface was used to configure Suricata detection rules and monitor live alert feeds.
+    <br><br>
+
+    <span style="color:#00a1ff;">— SELKS Services Deployed —</span><br><br>
+    <div style="display:inline-block; text-align:left; max-width:700px;">
+        <div style="margin-bottom:10px;"><strong>IDS (Suricata)</strong> — Monitors all network traffic in real time, detecting port scans, DoS/DDoS attempts, protocol anomalies, and exploitation attempts against known vulnerabilities.</div>
+        <div style="margin-bottom:10px;"><strong>Network Metadata (Zeek-style logging)</strong> — Captures a complete record of all network communications: source/destination IPs, ports, protocols, session duration, and payload metadata — without storing full pcaps, offering scalable visibility.</div>
+        <div style="margin-bottom:10px;"><strong>Threat Hunting (Scirius)</strong> — Provides a management interface for Suricata rulesets and a threat hunting dashboard for querying historical event data.</div>
+        <div style="margin-bottom:10px;"><strong>Full Packet Capture (Arkime)</strong> — Ingests and stores raw pcap data, enabling complete packet-level replay and forensic investigation of past network sessions.</div>
+        <div style="margin-bottom:10px;"><strong>Alert Dashboards (EveBox + Kibana)</strong> — Real-time alert visualization, event timelines, and custom dashboard creation.</div>
+    </div>
+    <br>
+
+    <span style="color:#00a1ff;">— IPS Deployment: Suricata on pfSense (VirtualBox) —</span><br><br>
+    Because permission to test IPS on the live production network was not granted, a separate virtual network was built in VirtualBox to evaluate the IPS component without risk to the enterprise.
+    Two VMs were created: one running pfSense as the gateway/firewall, and one running Ubuntu as the internal endpoint.
+    Suricata was installed on pfSense via the Package Manager and configured in <strong>Legacy IPS mode</strong> — upon detecting a threat, it automatically adds pfSense firewall rules to block the malicious traffic source.
+    <br><br>
+
+    <span style="color:#00a1ff;">— Docker macVLAN Isolation —</span><br><br>
+    To give pfSense/Suricata full visibility over container-to-container traffic (which is hidden from the firewall in the default Docker bridge network), a <strong>macVLAN</strong> Docker network was created.
+    Unlike the standard docker0 bridge (which only shows external traffic to the firewall), macVLAN assigns each container a unique MAC address on the physical network segment — making all inter-container traffic visible to Suricata.
+    A container named with a test identity was deployed at a static IP, and used as the attack target.
+    Custom Suricata rules (ICMP filter rules) were written and applied to validate detection coverage.
+    <br><br>
+
+    <span style="color:#00a1ff;">— Attack Simulation &amp; Detection —</span><br><br>
+    A <strong>TCP XMAS FLOOD</strong> DDoS attack was launched from a Kali Linux machine using Pentmenu (option 2 → DoS → option 6 → TCP XMAS FLOOD). The attack targeted a Windows Server with a random source IP. Traffic on the target surged from ~8 Kbit/s baseline to nearly <strong>100 Mbit/s</strong>.
+    SELKS detected the surge within seconds — Scirius generated real-time alerts visible in both the EveBox and Kibana dashboards, showing the attacker IP, attack type, and affected protocols.
+    On the pfSense/Suricata IPS side, the Legacy Mode automatically blocked the attacking source by injecting a firewall rule.
+    <br><br>
+
+    <span style="color:#00a1ff;">— Deployment Modes Evaluated —</span><br><br>
+    <div style="display:inline-block; text-align:left; max-width:700px;">
+        <div style="margin-bottom:8px;"><strong>On-Premises</strong> — Full control over data and infrastructure. SELKS installed directly on a physical or Proxmox VM server inside the enterprise network.</div>
+        <div style="margin-bottom:8px;"><strong>Cloud</strong> — Scalable deployment on AWS, Azure, or GCP. Lower upfront cost, managed underlying infrastructure.</div>
+        <div style="margin-bottom:8px;"><strong>Hybrid</strong> — SELKS on-premises for internal traffic; cloud deployment for analyzing external web traffic. Combines control and flexibility.</div>
+    </div>
+    <br>
+
+    <span style="color:#00a1ff;">— Technologies —</span><br><br>
+    SELKS &nbsp;&#8226;&nbsp; Suricata &nbsp;&#8226;&nbsp; pfSense &nbsp;&#8226;&nbsp; Proxmox &nbsp;&#8226;&nbsp; VirtualBox &nbsp;&#8226;&nbsp;
+    Docker &nbsp;&#8226;&nbsp; macVLAN &nbsp;&#8226;&nbsp; Elasticsearch &nbsp;&#8226;&nbsp; Logstash &nbsp;&#8226;&nbsp; Kibana &nbsp;&#8226;&nbsp;
+    Scirius &nbsp;&#8226;&nbsp; Arkime &nbsp;&#8226;&nbsp; EveBox &nbsp;&#8226;&nbsp; Kali Linux &nbsp;&#8226;&nbsp; Pentmenu
+
+</div>
+</div>

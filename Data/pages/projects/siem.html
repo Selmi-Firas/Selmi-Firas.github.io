@@ -1,0 +1,62 @@
+<hr>
+
+<div id="mapex_title">SIEM — Enterprise Security</div>
+<br>
+
+<div id="mapex_tldr">
+    <img src="https://img.shields.io/badge/Category-SIEM-red" alt="category"/>
+    <img src="https://img.shields.io/badge/Stack-ELK%20(Elasticsearch%20%7C%20Logstash%20%7C%20Kibana)-yellow" alt="elk"/>
+    <img src="https://img.shields.io/badge/IDS-Snort-blue" alt="snort"/>
+    <img src="https://img.shields.io/badge/HIDS-Wazuh-orange" alt="wazuh"/>
+</div>
+
+<div id="mapex_body">
+<div class="mapex_text" style="max-width:820px; margin:0 auto; text-align:center; padding:0 20px; line-height:1.9;">
+
+    <br>
+    Proposed and deployed a full <strong>SIEM (Security Information and Event Management)</strong> solution for an enterprise environment
+    — combining Snort, the ELK Stack, and Wazuh to deliver real-time log collection, event correlation,
+    threat detection, and centralized alerting from a single Kibana interface.
+    <br><br>
+
+    <span style="color:#00a1ff;">— Problem Statement —</span><br><br>
+    The target enterprise suffered from an absence of robust security infrastructure: no IDS/IPS, insufficient network monitoring, and no centralized visibility over security events. Firewalls and antivirus alone proved insufficient against evolving attack vectors. The goal was to implement a SIEM that provides real-time detection, correlation, and an organized alert workflow to support faster incident response.
+    <br><br>
+
+    <span style="color:#00a1ff;">— Pipeline Architecture —</span><br><br>
+    <div style="display:inline-block; text-align:left; max-width:700px;">
+        <div style="margin-bottom:10px;"><strong>Snort</strong> — Network Intrusion Detection System (NIDS). Deployed to monitor all incoming and outgoing network traffic in real time. Operates using a preconfigured rule set; custom rules created and validated to match specific threat signatures. Alerts are written to log files and forwarded downstream into the ELK pipeline.</div>
+        <div style="margin-bottom:10px;"><strong>Filebeat</strong> — Lightweight log shipper installed on monitored servers. Reads Snort alert logs and system logs, then forwards them to Logstash for processing. Configured with input and output modules to specify sources and destinations.</div>
+        <div style="margin-bottom:10px;"><strong>Logstash</strong> — Event processing engine. Receives logs from Filebeat, applies filtering and enrichment (parsing fields, adding metadata, normalizing timestamps), and outputs structured events to Elasticsearch for indexing.</div>
+        <div style="margin-bottom:10px;"><strong>Elasticsearch</strong> — Distributed search and storage engine. All security events from Snort, Wazuh, and system logs are indexed here, enabling sub-second queries across millions of events for correlation and investigation.</div>
+        <div style="margin-bottom:10px;"><strong>Kibana</strong> — Primary visualization and investigation interface. Dashboards display real-time alert feeds, traffic volume graphs, attack timelines, and geographic source maps. Snort alerts are rendered directly in Kibana with full event context.</div>
+        <div style="margin-bottom:10px;"><strong>Wazuh Manager</strong> — Centralized HIDS management server. Collects security telemetry from all connected agents, analyzes events against a rule database, and forwards findings to Elasticsearch via Logstash.</div>
+        <div style="margin-bottom:10px;"><strong>Wazuh Agent (Windows)</strong> — Installed on Windows endpoints to monitor Windows Event Logs, registry changes, file integrity, and authentication events. Reports in real time to the Wazuh Manager.</div>
+        <div style="margin-bottom:10px;"><strong>Wazuh Agent (Linux)</strong> — Installed on Linux servers to monitor syslog, auth.log, file system integrity, and process activity. Reports in real time to the Wazuh Manager.</div>
+    </div>
+    <br>
+
+    <span style="color:#00a1ff;">— SIEM Functional Capabilities —</span><br><br>
+    <div style="display:inline-block; text-align:left; max-width:700px;">
+        <div style="margin-bottom:8px;">&#8226; Real-time collection of logs and events from network and host sources.</div>
+        <div style="margin-bottom:8px;">&#8226; Normalization and enrichment of raw data into a structured, queryable format.</div>
+        <div style="margin-bottom:8px;">&#8226; Correlation of events across multiple sources to surface patterns indicating attacks.</div>
+        <div style="margin-bottom:8px;">&#8226; Automated alert generation with severity classification.</div>
+        <div style="margin-bottom:8px;">&#8226; Full audit trail and archiving for compliance and forensic investigation.</div>
+        <div style="margin-bottom:8px;">&#8226; Security dashboards and reports for operational visibility.</div>
+    </div>
+    <br>
+
+    <span style="color:#00a1ff;">— Attack Detection: Brute-Force SSH —</span><br><br>
+    A live <strong>brute-force SSH attack</strong> was simulated against a Linux server to validate the full detection pipeline.
+    Wazuh agents on the target machine detected repeated failed authentication attempts and triggered alerts.
+    Snort captured the corresponding network traffic pattern and generated IDS alerts.
+    The full attack chain — connection attempts, authentication failures, source IP — was visible end-to-end in the Kibana dashboard within seconds of the attack starting.
+    <br><br>
+
+    <span style="color:#00a1ff;">— Technologies —</span><br><br>
+    Snort &nbsp;&#8226;&nbsp; Elasticsearch &nbsp;&#8226;&nbsp; Logstash &nbsp;&#8226;&nbsp; Kibana &nbsp;&#8226;&nbsp; Filebeat &nbsp;&#8226;&nbsp;
+    Wazuh Manager &nbsp;&#8226;&nbsp; Wazuh Agent &nbsp;&#8226;&nbsp; Ubuntu &nbsp;&#8226;&nbsp; Windows Server
+
+</div>
+</div>

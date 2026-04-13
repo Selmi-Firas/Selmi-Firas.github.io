@@ -1,0 +1,87 @@
+<hr>
+<div id="pt">Browse through a selection of my projects with the buttons below!</div>
+<br>
+
+<style>
+.proj-text-btn {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.7);
+    margin: 8px;
+    cursor: pointer;
+    transition: box-shadow 0.3s, transform 0.2s;
+    vertical-align: middle;
+    text-align: center;
+    padding: 6px;
+    box-sizing: border-box;
+}
+.proj-text-btn:hover {
+    box-shadow: 0 0 18px rgba(255,255,255,0.5), inset 0 0 12px rgba(255,255,255,0.15);
+    transform: scale(1.08);
+}
+.proj-text-btn.active-proj {
+    border-color: yellow;
+    box-shadow: 0 0 18px rgba(255,230,0,0.6), inset 0 0 12px rgba(255,230,0,0.2);
+}
+.proj-btn-abbr {
+    font-family: 'VT323', monospace;
+    font-size: 1.6rem;
+    font-weight: bold;
+    line-height: 1.1;
+    color: #fff;
+    text-shadow: 0 0 6px rgba(0,0,0,0.8);
+}
+.proj-btn-label {
+    font-family: 'cascadia', monospace;
+    font-size: 0.6rem;
+    color: rgba(255,255,255,0.85);
+    margin-top: 3px;
+    line-height: 1.2;
+    text-shadow: 0 0 4px rgba(0,0,0,0.8);
+}
+</style>
+
+<div id="proj-button-section">
+    <script src="./scripts/button_nav_proj.js"></script>
+
+    <div id="soc_lab-button" class="proj-text-btn" style="background:rgba(220,50,50,0.35);" onClick="LoadProject(this,0);">
+        <div class="proj-btn-abbr">SOC</div>
+        <div class="proj-btn-label">Security Onion</div>
+    </div>
+
+    <div id="ztna-button" class="proj-text-btn" style="background:rgba(50,100,220,0.35);" onClick="LoadProject(this,1);">
+        <div class="proj-btn-abbr">ZTNA</div>
+        <div class="proj-btn-label">Zero Trust</div>
+    </div>
+
+    <div id="siem-button" class="proj-text-btn" style="background:rgba(200,150,0,0.35);" onClick="LoadProject(this,2);">
+        <div class="proj-btn-abbr">SIEM</div>
+        <div class="proj-btn-label">ELK + Wazuh</div>
+    </div>
+
+    <div id="sdn_quantum-button" class="proj-text-btn" style="background:rgba(130,50,220,0.35);" onClick="LoadProject(this,3);">
+        <div class="proj-btn-abbr">SDN</div>
+        <div class="proj-btn-label">Quantum</div>
+    </div>
+
+    <div id="selks_ids-button" class="proj-text-btn" style="background:rgba(0,160,160,0.35);" onClick="LoadProject(this,4);">
+        <div class="proj-btn-abbr">SELKS</div>
+        <div class="proj-btn-label">IDS / IPS</div>
+    </div>
+
+    <div id="ansible_deploy-button" class="proj-text-btn" style="background:rgba(20,160,60,0.35);" onClick="LoadProject(this,5);">
+        <div class="proj-btn-abbr">ANS</div>
+        <div class="proj-btn-label">Ansible</div>
+    </div>
+
+    <div id="snort_pfsense-button" class="proj-text-btn" style="background:rgba(220,100,0,0.35);" onClick="LoadProject(this,6);">
+        <div class="proj-btn-abbr">SNT</div>
+        <div class="proj-btn-label">Snort/pfSense</div>
+    </div>
+
+</div>

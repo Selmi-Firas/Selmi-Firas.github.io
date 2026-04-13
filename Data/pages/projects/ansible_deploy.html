@@ -1,0 +1,63 @@
+<hr>
+
+<div id="mapex_title">Automated Deployment — Ansible</div>
+<br>
+
+<div id="mapex_tldr">
+    <img src="https://img.shields.io/badge/Category-Automation-green" alt="category"/>
+    <img src="https://img.shields.io/badge/Tool-Ansible-red" alt="tool"/>
+    <img src="https://img.shields.io/badge/Endpoints-30%20Windows%20Machines-blue" alt="endpoints"/>
+    <img src="https://img.shields.io/badge/Time%20Saved-95%25%2B-brightgreen" alt="savings"/>
+    <img src="https://img.shields.io/badge/Error%20Rate-Near%20Zero-success" alt="errors"/>
+</div>
+
+<div id="mapex_body">
+<div class="mapex_text" style="max-width:820px; margin:0 auto; text-align:center; padding:0 20px; line-height:1.9;">
+
+    <br>
+    Engineered a complete <strong>Ansible automation pipeline from scratch</strong> to handle multi-machine configuration,
+    software deployment, and file management across a heterogeneous academic lab environment of 30 Windows endpoints
+    and 1 Linux server hosting 12+ VMs — replacing a fully manual process that previously took hours.
+    <br><br>
+
+    <span style="color:#00a1ff;">— Context —</span><br><br>
+    At Grand Valley State University, the Systems &amp; Network Administration role required maintaining a lab environment serving 4–5 concurrent classes per week with 20+ students each. Each class session required a consistent, pre-configured software environment across all 30 Windows workstations. Before automation, setting up or reconfiguring these machines was done entirely by hand — a process prone to inconsistency, human error, and significant time investment.
+    <br><br>
+
+    <span style="color:#00a1ff;">— What Was Automated —</span><br><br>
+    <div style="display:inline-block; text-align:left; max-width:700px;">
+        <div style="margin-bottom:10px;"><strong>Software Installation</strong> — Ansible playbooks handle installation of all required applications across all 30 machines simultaneously using WinRM remote execution. A single command triggers deployment across the entire fleet.</div>
+        <div style="margin-bottom:10px;"><strong>File Transfer &amp; Synchronization</strong> — Automated distribution of lab files, configuration templates, and resources from the central Linux server to all endpoints. Ensures every student receives identical starting conditions.</div>
+        <div style="margin-bottom:10px;"><strong>System Configuration</strong> — Configures Windows settings, environment variables, and application preferences across all machines to guarantee 100% consistent environment setup on every run.</div>
+        <div style="margin-bottom:10px;"><strong>Application Deployment Pipelines</strong> — Structured reusable Ansible roles for different deployment scenarios — enabling rapid reconfiguration between different class labs without starting from scratch.</div>
+    </div>
+    <br>
+
+    <span style="color:#00a1ff;">— Results —</span><br><br>
+    <div style="display:inline-block; text-align:left; max-width:700px;">
+        <div style="margin-bottom:10px;"><strong>Large deployment time:</strong> 5–6 hours &#8594; under 1 hour</div>
+        <div style="margin-bottom:10px;"><strong>Standard task time:</strong> ~1 hour &#8594; 30 seconds</div>
+        <div style="margin-bottom:10px;"><strong>Human error rate:</strong> Eliminated — all processes are scripted, version-controlled, and repeatable</div>
+        <div style="margin-bottom:10px;"><strong>Consistency:</strong> 100% identical environment across all 30 machines on every deployment run</div>
+        <div style="margin-bottom:10px;"><strong>Overall time reduction:</strong> Over 95% across all deployment operations</div>
+    </div>
+    <br>
+
+    <span style="color:#00a1ff;">— Technical Design —</span><br><br>
+    Playbooks were structured using Ansible roles for modularity — separating software installation, file transfer, and configuration tasks into independent, reusable components.
+    Windows connectivity was handled via <strong>WinRM</strong> (Windows Remote Management), with Ansible configured to authenticate over HTTPS using local admin credentials.
+    The Linux server acted as the Ansible control node, executing all playbooks and maintaining the inventory of 30 Windows hosts.
+    All playbooks were written in <strong>YAML</strong> and stored in a Git repository for version control — enabling rollback and change tracking.
+    <br><br>
+
+    <span style="color:#00a1ff;">— Infrastructure Managed —</span><br><br>
+    1 Linux server hosting 12+ VMs &nbsp;&#8226;&nbsp; 30 Windows workstations &nbsp;&#8226;&nbsp;
+    30 VirtualBox instances each running 3+ VMs &nbsp;&#8226;&nbsp; 90+ total VMs under management
+    <br><br>
+
+    <span style="color:#00a1ff;">— Technologies —</span><br><br>
+    Ansible &nbsp;&#8226;&nbsp; YAML &nbsp;&#8226;&nbsp; Python &nbsp;&#8226;&nbsp; WinRM &nbsp;&#8226;&nbsp;
+    Windows Server &nbsp;&#8226;&nbsp; Ubuntu Linux &nbsp;&#8226;&nbsp; SSH &nbsp;&#8226;&nbsp; Git &nbsp;&#8226;&nbsp; VirtualBox
+
+</div>
+</div>

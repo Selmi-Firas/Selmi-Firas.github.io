@@ -1,0 +1,85 @@
+<hr>
+
+<div id="mapex_title">Snort / pfSense IDS-IPS</div>
+<br>
+
+<div id="mapex_tldr">
+    <img src="https://img.shields.io/badge/Category-Network%20Security-red" alt="category"/>
+    <img src="https://img.shields.io/badge/IDS%2FIPS-Snort-blue" alt="snort"/>
+    <img src="https://img.shields.io/badge/Firewall-pfSense-orange" alt="pfsense"/>
+    <img src="https://img.shields.io/badge/Containers-Docker-cyan" alt="docker"/>
+    <img src="https://img.shields.io/badge/PenTest-Kali%20Linux-darkgreen" alt="kali"/>
+</div>
+
+<div id="mapex_body">
+<div class="mapex_text" style="max-width:820px; margin:0 auto; text-align:center; padding:0 20px; line-height:1.9;">
+
+    <br>
+    Designed and deployed a network intrusion detection and prevention system using <strong>Snort integrated into pfSense</strong>,
+    with Docker containers on Ubuntu as simulated attack targets and Kali Linux in VMware for penetration testing.
+    The project was carried out at <strong>Tunisie Telecom</strong> and defended in May 2024.
+    <br><br>
+
+    <span style="color:#00a1ff;">— Problem Statement —</span><br><br>
+    The target enterprise lacked any intrusion detection or prevention capability. Network traffic was unmonitored,
+    leaving the infrastructure exposed to external attacks, port scans, DoS attempts, and unauthorized access.
+    The goal was to deploy a cost-effective, open-source IDS/IPS solution that could detect and block threats
+    in real time without requiring expensive commercial hardware.
+    <br><br>
+
+    <span style="color:#00a1ff;">— Solution: Snort inside pfSense —</span><br><br>
+    <strong>pfSense</strong> was selected as the network firewall and gateway — a free, open-source platform that acts as
+    a security guard for the network, controlling inbound and outbound traffic, blocking malicious flows,
+    and enabling secure remote access. It was installed on VirtualBox and configured with LAN and WAN interfaces.
+    <br><br>
+    <strong>Snort</strong> was then installed directly into pfSense via the package manager
+    (System → Package Manager → Installed Packages). Snort operates in three modes:
+    <br><br>
+    <div style="display:inline-block; text-align:left; max-width:700px;">
+        <div style="margin-bottom:10px;"><strong>Sniffer Mode</strong> — Reads network packets in real time and displays them in the console. Used for live traffic inspection and initial diagnosis.</div>
+        <div style="margin-bottom:10px;"><strong>Packet Logger Mode</strong> — Captures and saves packets to disk for offline forensic analysis and post-incident review.</div>
+        <div style="margin-bottom:10px;"><strong>NIDS Mode</strong> — The primary deployment mode. Snort monitors network traffic against a rule set, generates alerts for suspicious patterns, and in IPS mode actively blocks the offending traffic by integrating with pfSense firewall rules.</div>
+    </div>
+    <br>
+    Custom Snort rules were written and tested to detect specific attack signatures relevant to the environment.
+    The pfSense web dashboard provided a unified view of firewall activity, Snort alerts, and interface traffic statistics.
+    <br><br>
+
+    <span style="color:#00a1ff;">— Docker Attack Simulation Environment —</span><br><br>
+    Docker was installed on Ubuntu (<code>sudo apt install docker.io</code>) to create lightweight, isolated containers
+    as attack targets — allowing realistic threat simulation without touching production systems.
+    The Docker environment enabled rapid spin-up and teardown of target machines for repeated attack testing cycles.
+    Containers were connected to the monitored network segment so all traffic passed through pfSense and Snort.
+    <br><br>
+
+    <span style="color:#00a1ff;">— Penetration Testing: Kali Linux in VMware —</span><br><br>
+    Kali Linux was deployed inside VMware as the attacker machine — providing a full suite of pre-installed
+    penetration testing tools for executing controlled attacks against the Docker containers.
+    Attack scenarios executed included port scanning, service enumeration, and network-based exploits.
+    Each attack was monitored in real time through the Snort alert interface inside pfSense,
+    validating that detection rules were correctly triggering and that the IPS mode was blocking malicious traffic.
+    <br><br>
+
+    <span style="color:#00a1ff;">— Network Architecture —</span><br><br>
+    <div style="display:inline-block; text-align:left; max-width:700px;">
+        <div style="margin-bottom:8px;">&#8226; pfSense VM — gateway/firewall with LAN and WAN interfaces configured</div>
+        <div style="margin-bottom:8px;">&#8226; Ubuntu VM — internal endpoint running Docker containers as attack targets</div>
+        <div style="margin-bottom:8px;">&#8226; Kali Linux VM (VMware) — attacker machine on the same test network</div>
+        <div style="margin-bottom:8px;">&#8226; All traffic routed through pfSense — giving Snort full visibility over every connection</div>
+    </div>
+    <br>
+
+    <span style="color:#00a1ff;">— Comparison: Security Onion vs Snort/pfSense —</span><br><br>
+    Security Onion is more beginner-friendly with better built-in documentation and a unified web console,
+    making it ideal for teams new to network security monitoring.
+    Snort integrated into pfSense offers greater flexibility and customization — better suited for environments
+    where the firewall and IDS/IPS must share the same device, or where fine-grained rule control is needed.
+    This project demonstrated the pfSense/Snort approach in a live test environment.
+    <br><br>
+
+    <span style="color:#00a1ff;">— Technologies —</span><br><br>
+    Snort &nbsp;&#8226;&nbsp; pfSense &nbsp;&#8226;&nbsp; Docker &nbsp;&#8226;&nbsp; Ubuntu &nbsp;&#8226;&nbsp;
+    Kali Linux &nbsp;&#8226;&nbsp; VMware &nbsp;&#8226;&nbsp; VirtualBox &nbsp;&#8226;&nbsp; Wireshark
+
+</div>
+</div>

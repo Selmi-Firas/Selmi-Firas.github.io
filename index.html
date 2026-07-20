@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en" class="js"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Firas Selmi — Network Engineer · NetDevOps</title>
+<meta name="description" content="Firas Selmi — network engineer focused on network automation, segmentation, and infrastructure as code. Ansible, Python, Cisco, pfSense, 802.1X.">
+<meta name="theme-color" content="#11111b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=&#39;http://www.w3.org/2000/svg&#39; viewBox=&#39;0 0 32 32&#39;%3E%3Crect width=&#39;32&#39; height=&#39;32&#39; rx=&#39;7&#39; fill=&#39;%231e1e2e&#39;/%3E%3Ctext x=&#39;6&#39; y=&#39;22&#39; font-family=&#39;monospace&#39; font-size=&#39;14&#39; fill=&#39;%23cba6f7&#39;%3E%26gt;_%3C/text%3E%3C/svg%3E">
+<link rel="preload" as="image" href="assets/wallpaper.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  :root{
+    /* catppuccin mocha — from the rice's mocha.css */
+    --crust:#11111b; --mantle:#181825; --base:#1e1e2e;
+    --surface0:#313244; --surface1:#45475a; --surface2:#585b70;
+    --overlay0:#6c7086; --overlay1:#7f849c;
+    --text:#cdd6f4; --subtext:#a6adc8;
+    --mauve:#cba6f7; --pink:#f5c2e7; --lavender:#b4befe;
+    --red:#f38ba8; --peach:#fab387; --yellow:#f9e2af;
+    --green:#a6e3a1; --teal:#94e2d5; --sky:#89dceb; --blue:#89b4fa;
+    --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+    --winbg:rgba(30,30,46,.87);
+    --barbg:rgba(17,17,27,.72);
+    --wline:rgba(203,166,247,.16);
+    --gap:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;color-scheme:dark}
+  body{
+    background:var(--crust);
+    color:var(--text);
+    font-family:var(--mono);
+    font-size:15px;
+    line-height:1.7;
+    overflow-x:hidden;
+  }
+  /* ---------- wallpaper (fixed layer — works on iOS too) ---------- */
+  body::before{
+    content:'';position:fixed;inset:0;z-index:-2;
+    background:url('assets/wallpaper.webp') center/cover no-repeat var(--crust);
+  }
+  body::after{
+    content:'';position:fixed;inset:0;z-index:-1;
+    background:linear-gradient(180deg,rgba(17,17,27,.52),rgba(17,17,27,.30) 34%,rgba(17,17,27,.62));
+  }
+  @media(max-width:760px){body::before{background-position:62% center}}
+
+  a{color:var(--lavender);text-decoration:none}
+  a:hover{text-decoration:underline}
+  a:focus-visible,button:focus-visible,input:focus-visible,video:focus-visible,summary:focus-visible{
+    outline:2px solid var(--pink);outline-offset:2px;border-radius:3px;
+  }
+  ::selection{background:rgba(203,166,247,.32)}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+  .wrap-nar{max-width:920px;margin:0 auto;padding:0 18px}
+
+  /* ================= waybar ================= */
+  header.waybar{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    gap:8px;padding:8px 10px;
+    font-size:12.5px;
+    pointer-events:none;
+  }
+  .pill{
+    pointer-events:auto;
+    display:flex;align-items:center;gap:2px;
+    background:var(--barbg);
+    border:1px solid var(--wline);
+    border-radius:14px;
+    padding:5px 12px;
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    box-shadow:0 6px 24px rgba(0,0,0,.35);
+    white-space:nowrap;
+  }
+  .pill svg{width:15px;height:15px;flex:none}
+  .id-pill{gap:8px;color:var(--text)}
+  .id-pill .arch{color:var(--mauve)}
+  .id-pill b{font-weight:500}
+  .id-pill b i{font-style:normal;color:var(--mauve)}
+  nav.ws-pill{gap:3px}
+  nav.ws-pill a{
+    color:var(--overlay1);
+    padding:1px 9px;border-radius:10px;
+    transition:background .2s ease,color .2s ease,padding .25s ease;
+  }
+  nav.ws-pill a .lbl{display:none}
+  nav.ws-pill a:hover{background:rgba(88,91,112,.55);color:var(--text);text-decoration:none}
+  nav.ws-pill a.active{
+    background:var(--surface1);color:var(--text);
+    padding:1px 13px;border-radius:12px;
+  }
+  @media(min-width:900px){
+    nav.ws-pill a .lbl{display:inline;margin-left:6px;color:var(--subtext)}
+    nav.ws-pill a.active .lbl{color:var(--pink)}
+  }
+  .sys-pill{gap:12px;color:var(--subtext)}
+  .sys-pill .mod{display:flex;align-items:center;gap:5px}
+  .sys-pill a.mod{color:var(--subtext)}
+  .sys-pill a.mod:hover{color:var(--pink);text-decoration:none}
+  .sys-pill #clock{color:var(--text)}
+  @media(max-width:760px){
+    header.waybar{padding:6px}
+    .pill{padding:4px 9px;border-radius:12px}
+    .id-pill .host{display:none}
+    .sys-pill .mod.opt{display:none}
+    nav.ws-pill a{padding:1px 7px}
+  }
+
+  /* ================= windows ================= */
+  .win{
+    background:var(--winbg);
+    border:1px solid var(--wline);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 18px 48px rgba(0,0,0,.42);
+  }
+  @media(min-width:900px){
+    @supports (backdrop-filter:blur(1px)){
+      .win{backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+    }
+  }
+  .win-bar{
+    display:flex;align-items:center;gap:9px;
+    padding:8px 13px;
+    background:rgba(17,17,27,.55);
+    border-bottom:1px solid rgba(203,166,247,.12);
+    font-size:12px;color:var(--subtext);
+    min-height:34px;
+  }
+  .win-bar svg{width:13px;height:13px;color:var(--mauve);flex:none}
+  .win-bar .ttl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .win-bar .meta{margin-left:auto;display:flex;align-items:center;gap:7px;color:var(--overlay1);font-size:11.5px;letter-spacing:.4px}
+  .win-body{padding:20px 22px 24px}
+
+  /* focused window — niri-style ring, mauve→pink */
+  .win{transition:box-shadow .3s ease,border-color .3s ease}
+  .win.focus{
+    border-color:rgba(203,166,247,.65);
+    box-shadow:0 0 0 1.5px rgba(203,166,247,.55),0 0 30px rgba(203,166,247,.18),0 18px 48px rgba(0,0,0,.45);
+  }
+
+  /* scroll reveal — windows "open" as you scroll */
+  html.js .win{
+    opacity:0;
+    transform:translateY(26px) scale(.975);
+    transition:
+      opacity .55s ease var(--d,0s),
+      transform .55s cubic-bezier(.2,.7,.25,1) var(--d,0s),
+      box-shadow .3s ease,border-color .3s ease;
+  }
+  html.js .win.on{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    html.js .win{opacity:1;transform:none;transition:none}
+    .cursor{animation:none !important}
+    nav.ws-pill a{transition:none}
+  }
+
+  /* ================= sections / desktop ================= */
+  section,footer.sec{padding:44px 0;scroll-margin-top:74px}
+  main{padding-top:96px}
+  .cmdline{margin-bottom:var(--gap)}
+  .cmdline .win-body{padding:12px 18px}
+
+  /* terminal text */
+  .tl .p{color:var(--mauve)}
+  .tl .path{color:var(--pink)}
+  .tl .cmd{color:var(--text)}
+  .t-out{color:var(--subtext);white-space:pre-wrap;overflow-wrap:break-word}
+  .t-out.t-id{white-space:normal}
+  .t-out .hl{color:var(--mauve)}
+  .t-out .ok{color:var(--green)}
+  .t-name{
+    color:var(--text);
+    font-size:clamp(22px,4.5vw,34px);
+    font-weight:700;letter-spacing:-.5px;
+    margin:2px 0;line-height:1.25;
+  }
+  .t-role{color:var(--mauve);font-size:clamp(14px,2.4vw,17px)}
+
+  /* ---------- fastfetch hero ---------- */
+  .ff{display:flex;gap:30px;align-items:flex-start;flex-wrap:wrap;margin:14px 0 4px}
+  .ff .ascii{
+    font-size:clamp(6px,1.6vw,12px);
+    line-height:1.06;letter-spacing:0;
+    font-weight:700;
+    background:linear-gradient(135deg,var(--mauve) 20%,var(--pink) 65%,var(--lavender));
+    -webkit-background-clip:text;background-clip:text;
+    color:transparent;
+    flex:none;
+  }
+  .ff .mods{font-size:13.5px;line-height:1.85;min-width:min(320px,100%)}
+  .ff .mods .fhost{color:var(--pink);font-weight:700}
+  .ff .mods .fsep{color:var(--surface2)}
+  .ff .row{display:flex;gap:10px}
+  .ff .row .fk{color:var(--mauve);min-width:78px;font-weight:500}
+  .ff .row .fv{color:var(--subtext)}
+  .chips{display:flex;gap:6px;margin-top:10px}
+  .chips span{width:15px;height:15px;border-radius:4px;display:inline-block}
+  .t-input-row{display:flex;align-items:baseline;gap:0;margin-top:12px;cursor:text}
+  #terminal .win-body{cursor:text}
+  #terminal .win-body a,#terminal .win-body a *{cursor:pointer}
+  #t-input{
+    background:transparent;border:none;color:var(--text);
+    font-family:var(--mono);font-size:14px;
+    flex:0 1 auto;width:2ch;min-width:2px;max-width:100%;
+    caret-color:var(--pink);
+  }
+  .t-input-row.typing .cursor{display:none}
+  #t-suggest{margin-top:6px;font-size:13.5px;max-width:280px}
+  #t-suggest .sugi{padding:1px 10px;color:var(--subtext);border-radius:5px}
+  #t-suggest .sugi.sel{background:var(--surface1);color:var(--text)}
+  #t-suggest .sugi .m{color:var(--pink)}
+  #t-input:focus{outline:none}
+  /* the blinking block only shows when the input truly has focus — no lying */
+  .cursor{display:none;width:8px;height:16px;background:var(--pink);
+    vertical-align:-2px;animation:blink 1s steps(1) infinite}
+  .t-input-row.focused .cursor{display:inline-block}
+  .t-input-row.typing .cursor{display:none !important}
+  @keyframes blink{50%{opacity:0}}
+  .hero-hint{
+    font-size:12px;color:var(--subtext);
+    margin-top:10px;text-align:right;
+    text-shadow:0 1px 8px rgba(17,17,27,.9);
+  }
+  .hero-hint kbd{
+    border:1px solid var(--surface1);border-radius:4px;padding:1px 6px;
+    background:rgba(30,30,46,.8);color:var(--mauve);font-family:var(--mono);
+  }
+
+  /* ---------- tiled layouts ---------- */
+  .tiles{display:grid;gap:var(--gap);align-items:stretch}
+  .tiles-about{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr)}
+  .tiles-xp{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
+  .tiles-xp .col{display:grid;gap:var(--gap);align-content:start}
+  @media(max-width:900px){
+    .tiles-about,.tiles-xp{grid-template-columns:1fr}
+  }
+
+  /* about */
+  .about-p p{max-width:70ch;color:var(--text)}
+  .about-p p+p{margin-top:14px}
+  .about-p .dim{color:var(--subtext)}
+  .about-p em{color:var(--pink);font-style:italic}
+  .about-p strong{color:var(--mauve);font-weight:700}
+
+  /* imv / mpv media windows */
+  .imv .win-body{padding:0;display:flex;flex-direction:column;height:100%}
+  .imv img{display:block;width:100%;height:auto}
+  .imv figure{margin:0;display:flex;flex-direction:column;height:100%}
+  .imv .shot{flex:1;min-height:0}
+  /* on desktop, the about photo window matches the text window's height */
+  @media(min-width:901px){
+    .tiles-about .imv .shot{position:relative}
+    .tiles-about .imv img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  }
+  .imv figcaption,.mpv figcaption{
+    padding:8px 13px;font-size:12px;color:var(--subtext);
+    border-top:1px solid rgba(203,166,247,.12);
+    background:rgba(17,17,27,.45);
+  }
+  .mpv .win-body{padding:0}
+  .vid-callout{
+    font-size:clamp(19px,2.8vw,27px);font-weight:700;line-height:1.35;
+    color:var(--text);letter-spacing:-.3px;
+    text-shadow:0 1px 12px rgba(17,17,27,.9);
+    margin:6px 2px -2px;
+  }
+  .vid-callout em{font-style:normal;color:var(--pink)}
+  .mpv video{display:block;width:100%;height:auto;background:#000}
+
+  /* skills yaml */
+  .yaml{
+    font-size:13.5px;line-height:2;
+    white-space:pre-wrap;overflow-wrap:break-word;
+    overflow-x:auto;
+  }
+  .yaml .k{color:var(--mauve)}
+  .yaml .v{color:var(--text)}
+  .yaml .c{color:var(--overlay1)}
+
+  /* projects */
+  .proj-grid{display:grid;gap:var(--gap);grid-template-columns:repeat(auto-fit,minmax(min(430px,100%),1fr))}
+  .proj h3{font-size:17px;font-weight:700;color:var(--text);line-height:1.4;margin-bottom:8px}
+  .proj h3 .soft{color:var(--subtext);font-weight:400}
+  .status{
+    font-size:11px;letter-spacing:.4px;
+    display:inline-flex;align-items:center;gap:6px;color:var(--subtext);
+    white-space:nowrap;
+  }
+  .led{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+  .led.up{background:var(--green);box-shadow:0 0 7px rgba(166,227,161,.8)}
+  .led.amber{background:var(--peach);box-shadow:0 0 7px rgba(250,179,135,.7)}
+  .proj p{color:var(--text);max-width:75ch;font-size:14px}
+  .proj .note{color:var(--subtext);margin-top:10px;font-size:13px}
+  .tags{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+  .tag{
+    font-size:12px;color:var(--lavender);
+    border:1px solid var(--surface1);border-radius:5px;padding:2px 9px;
+    background:rgba(49,50,68,.6);
+  }
+  .metric{
+    color:var(--pink);font-size:13px;
+    display:block;margin-top:12px;
+  }
+  .metric::before{content:'▸ ';color:var(--mauve)}
+  .proj-shot{
+    margin-top:16px;border:1px solid var(--surface1);border-radius:8px;overflow:hidden;
+  }
+  .proj-shot img{display:block;width:100%;height:auto}
+  .proj-shot figcaption{
+    padding:7px 12px;font-size:11.5px;color:var(--subtext);
+    background:rgba(17,17,27,.5);border-top:1px solid rgba(203,166,247,.12);
+  }
+
+  /* experience */
+  .xp{border-left:2px solid var(--surface1);padding-left:22px;margin-left:6px}
+  .xp-item{position:relative;padding-bottom:26px}
+  .xp-item:last-child{padding-bottom:0}
+  .xp-item::before{
+    content:'';position:absolute;left:-28px;top:7px;
+    width:9px;height:9px;border-radius:50%;
+    background:var(--green);box-shadow:0 0 7px rgba(166,227,161,.7);
+  }
+  .xp-item.past::before{background:var(--overlay0);box-shadow:none}
+  .xp-role{font-weight:700;color:var(--text)}
+  .xp-org{color:var(--mauve);font-size:13.5px}
+  .xp-date{color:var(--subtext);font-size:12.5px;margin-bottom:6px}
+  .xp-item p{color:var(--subtext);font-size:13.5px;max-width:72ch}
+  .xp-item p + p{margin-top:6px}
+
+  /* education / certs cards */
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}
+  @media(max-width:640px){.duo{grid-template-columns:1fr}}
+  .card h4{font-size:13px;color:var(--mauve);font-weight:500;margin-bottom:10px}
+  .card .big{color:var(--text);font-weight:700}
+  .card .sub{color:var(--subtext);font-size:13.5px}
+  .card .accent{color:var(--pink);font-size:13px}
+
+  /* contact */
+  .contact-line{font-size:14.5px;line-height:2.2}
+  .contact-line .k{color:var(--mauve);display:inline-block;min-width:110px}
+  /* print — recruiters do print */
+  @media print{
+    body::before,body::after,header.waybar,.hero-hint,.t-input-row,#t-suggest{display:none !important}
+    body{background:#fff;color:#111;font-size:12px}
+    .win{background:#fff;border:1px solid #bbb;box-shadow:none;opacity:1 !important;transform:none !important}
+    .win-bar{background:#f3f3f3;color:#333}
+    .t-out,.xp-item p,.proj .note,.card .sub,.yaml .c{color:#444}
+    .t-name,.proj h3,.xp-role,.card .big,.about-p p{color:#000}
+    a{color:#333}
+    .mpv,.imv{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= waybar ================= -->
+<header class="waybar">
+  <span class="pill id-pill">
+    <svg class="arch" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.6c-.9 2.2-1.5 3.7-2.6 5.9.7.7 1.5 1.5 2.8 2.4-1.4-.6-2.4-1.2-3.2-1.8-1.5 3.2-3.9 7.7-7 13.9 2.5-1.4 4.4-2.3 6.3-2.7.4-1.8 1.4-3.1 2.7-3.1h.1c1.3 0 2.3 1.3 2.7 3.1 1.9.4 3.8 1.3 6.2 2.7-.6-1.2-1.2-2.3-1.7-3.3-.9-.7-1.9-1.6-2.9-2.7.9.4 1.7.8 2.4 1-2.6-4.9-4-8.6-5.8-15.4Z"></path></svg>
+    <b class="host">firas@<i>arch</i></b>
+  </span>
+  <nav class="ws-pill pill" aria-label="Sections">
+    <a href="#home" data-ws="home" class="active">1<span class="lbl">~</span></a>
+    <a href="#about" data-ws="about" class="">2<span class="lbl">about</span></a>
+    <a href="#skills" data-ws="skills" class="">3<span class="lbl">skills</span></a>
+    <a href="#projects" data-ws="projects" class="">4<span class="lbl">projects</span></a>
+    <a href="#experience" data-ws="experience" class="">5<span class="lbl">exp</span></a>
+    <a href="#education" data-ws="education" class="">6<span class="lbl">edu</span></a>
+    <a href="#contact" data-ws="contact">7<span class="lbl">contact</span></a>
+  </nav>
+  <span class="pill sys-pill">
+    <a class="mod" href="mailto:firass@mail.gvsu.edu" title="email me" aria-label="Email Firas">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"></rect><path d="m3.5 7 8.5 6.5L20.5 7"></path></svg>
+    </a>
+    <span class="mod opt" title="link up/up" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 9.5a14 14 0 0 1 19 0"></path><path d="M6 13.2a9 9 0 0 1 12 0"></path><path d="M9.5 16.8a4.5 4.5 0 0 1 5 0"></path><circle cx="12" cy="19.6" r="1.3" fill="currentColor" stroke="none"></circle></svg>
+    </span>
+    <span class="mod opt" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="8" width="16" height="8" rx="2"></rect><rect x="4.5" y="10" width="10.5" height="4" rx="1" fill="currentColor" stroke="none"></rect><path d="M21.5 10.5v3"></path></svg>
+      <span>97%</span>
+    </span>
+    <span class="mod" id="clock" aria-live="off">Mon, Jul 20  00:22</span>
+  </span>
+</header>
+
+<main>
+
+<!-- ================= ws1 · hero / fastfetch ================= -->
+<section id="home" data-ws="home" aria-label="Intro">
+  <div class="wrap-nar">
+    <div class="win on" id="terminal">
+      <div class="win-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="2.5"></rect><path d="m6.5 9 3.5 3-3.5 3M12.5 15.5H17"></path></svg>
+        <span class="ttl">alacritty — firas@arch:~</span>
+        <span class="meta">ws·1</span>
+      </div>
+      <div class="win-body" style="font-size:14px;line-height:1.8">
+        <div class="tl"><span class="p">firas@arch</span>:<span class="path">~</span>$ <span class="cmd">fastfetch</span></div>
+        <div class="ff">
+<pre class="ascii" aria-hidden="true">███████╗██╗██████╗  █████╗ ███████╗
+██╔════╝██║██╔══██╗██╔══██╗██╔════╝
+█████╗  ██║██████╔╝███████║███████╗
+██╔══╝  ██║██╔══██╗██╔══██║╚════██║
+██║     ██║██║  ██║██║  ██║███████║
+╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝
+</pre>
+          <div class="mods">
+            <div class="fhost">firas@arch</div>
+            <div class="fsep">─────────────────</div>
+            <div class="row"><span class="fk">OS</span><span class="fv">Windows · Linux (Ubuntu, Kali, Mint, CentOS, Arch)</span></div>
+            <div class="row"><span class="fk">VM</span><span class="fv">VirtualBox · VMware · Proxmox · Docker · Containerlab</span></div>
+            <div class="row"><span class="fk">Term</span><span class="fv">alacritty · JetBrains Mono</span></div>
+            <div class="row"><span class="fk">Uptime</span><span class="fv">networking since 2023</span></div>
+            <div class="row"><span class="fk">Host</span><span class="fv"><a href="https://github.com/Selmi-Firas" rel="noopener">github.com/Selmi-Firas</a></span></div>
+            <div class="chips" aria-hidden="true">
+              <span style="background:var(--red)"></span><span style="background:var(--peach)"></span>
+              <span style="background:var(--yellow)"></span><span style="background:var(--green)"></span>
+              <span style="background:var(--teal)"></span><span style="background:var(--blue)"></span>
+              <span style="background:var(--mauve)"></span><span style="background:var(--pink)"></span>
+            </div>
+          </div>
+        </div>
+        <div class="tl" style="margin-top:16px"><span class="p">firas@arch</span>:<span class="path">~</span>$ <span class="cmd">whoami</span></div>
+        <div class="t-out t-id">
+          <h1 class="t-name">Firas Selmi</h1>
+          <div class="t-role">Network Engineer · Network Automation (NetDevOps)</div>
+          <div>Allendale, Michigan — open to network engineering &amp; automation roles</div>
+        </div>
+        <div class="tl" style="margin-top:14px"><span class="p">firas@arch</span>:<span class="path">~</span>$ <span class="cmd">show engineer summary</span></div>
+        <div class="t-out">Designs segmented, access-controlled networks and automates the
+boring parts. Led a zero-trust IT/OT segmentation project, built
+an SDN control plane from scratch, and ran a cyber
+range lab as <span class="hl">infrastructure as code</span>.
+M.S. Cybersecurity (GVSU, 2026) · CCNA <span class="ok">in progress</span> (exp. 08/2026)</div>
+        <div class="t-input-row">
+          <span class="tl"><span class="p">firas@arch</span>:<span class="path">~</span>$&nbsp;</span>
+          <input id="t-input" type="text" autocomplete="off" spellcheck="false" aria-label="Terminal input — type / to list sections" style="width: 2ch;">
+          <span class="cursor" aria-hidden="true"></span>
+        </div>
+        <div id="t-suggest" hidden="" aria-label="Section suggestions" role="listbox"></div>
+      </div>
+    </div>
+    <p class="hero-hint">try <kbd>/</kbd> · scroll to open the rest <span aria-hidden="true">↓</span></p>
+  </div>
+</section>
+
+<!-- ================= ws2 · about ================= -->
+<section id="about" data-ws="about">
+  <h2 class="sr-only">About</h2>
+  <div class="wrap">
+    <div class="tiles tiles-about">
+      <div class="win on" style="--d:0s">
+        <div class="win-bar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="2.5"></rect><path d="m6.5 9 3.5 3-3.5 3M12.5 15.5H17"></path></svg>
+          <span class="ttl">firas@arch:~/about</span>
+          <span class="meta">ws·2</span>
+        </div>
+        <div class="win-body about-p">
+          <div class="tl" style="margin-bottom:14px"><span class="p">firas@arch</span>:<span class="path">~/about</span>$ <span class="cmd">cat about.md</span></div>
+          <p>I got my start in Tunisia, an internship that turned into three roles at
+          the same company. I walked in to build an isolated test network, and walked
+          out having as a project lead for  <em>designing of a zero-trust segmentation</em> , directing a team of seven interns on the build.</p>
+          <p>Then Michigan: an M.S. in Cybersecurity at Grand Valley State, where the
+          assistantship handed me the keys to the university's security lab and I ran
+          it the only way that made sense to me  <strong>"as code"</strong>. My thesis
+          scratched the same itch at a different layer: a control plane that watches
+          its network, measures it, ranks its paths, and schedules work around what it
+          finds.</p>
+          
+        </div>
+      </div>
+      <div class="win imv on" style="--d:.12s">
+        <div class="win-bar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"></rect><circle cx="9" cy="10" r="1.6"></circle><path d="m5 18 5-5 3 3 3-3 3 3"></path></svg>
+          <span class="ttl">first time workign wih cables-2023</span>
+          <span class="meta">1/3</span>
+        </div>
+        <div class="win-body">
+          <figure>
+            <div class="shot"><img src="assets/fieldwork-rack.webp" width="900" height="1604" loading="lazy" decoding="async" alt="Firas Selmi working on switch cabling inside an open network rack"></div>
+            <figcaption>at the rack — Placeholder Infrastructures Groupe EVACOM</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ws3 · skills ================= -->
+<section id="skills" data-ws="skills">
+  <h2 class="sr-only">Skills</h2>
+  <div class="wrap-nar">
+    <div class="win on">
+      <div class="win-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="2.5"></rect><path d="m6.5 9 3.5 3-3.5 3M12.5 15.5H17"></path></svg>
+        <span class="ttl">firas@arch:~/skills</span>
+        <span class="meta">ws·3</span>
+      </div>
+      <div class="win-body">
+        <div class="tl" style="margin-bottom:12px"><span class="p">firas@arch</span>:<span class="path">~/skills</span>$ <span class="cmd">cat skills.yml</span></div>
+        <div class="yaml" role="figure" aria-label="Skills grouped by area"><span class="k">networking:</span>
+  <span class="v">[Cisco routing &amp; switching, VLANs, TCP/IP, DHCP, DNS, NAT, QoS,</span>
+   <span class="v">wireless APs, structured cabling, cable testing &amp; port mapping]</span>
+<span class="k">security:</span>
+  <span class="v">[802.1X / NAC, FreeRADIUS, network segmentation, zero trust,</span>
+   <span class="v">pfSense, Cyberoam, IDS/IPS (Suricata, Snort), SIEM (Wazuh, ELK)]</span>
+<span class="k">automation:</span>
+  <span class="v">[Ansible, Python, Bash, WinRM, configuration deployment,</span>
+   <span class="v">VM lifecycle automation, local LLM integration (Ollama)]</span>
+<span class="k">industrial_embedded:</span>
+  <span class="v">[CAN bus (MCP2515), SPI/serial, protocol translation,</span>
+   <span class="v">Raspberry Pi, Arduino, sensor telemetry]</span>
+<span class="k">systems:</span>
+  <span class="v">[Linux (Ubuntu, CentOS), Windows Server, Active Directory,</span>
+   <span class="v">Proxmox VE, Docker, Wireshark, Nmap, GNS3]</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ws4 · projects ================= -->
+<section id="projects" data-ws="projects">
+  <h2 class="sr-only">Projects</h2>
+  <div class="wrap">
+    <div class="win cmdline on">
+      <div class="win-body">
+        <div class="tl"><span class="p">firas@arch</span>:<span class="path">~/projects</span>$ <span class="cmd">ls projects/ --sort=impact</span></div>
+      </div>
+    </div>
+    <div class="proj-grid">
+
+      <article class="win proj on" style="--d:.05s">
+        <div class="win-bar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 7.5V6a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"></path></svg>
+          <span class="ttl">~/projects/zero-trust</span>
+          <span class="meta status"><span class="led up"></span>DESIGNED &amp; VALIDATED</span>
+        </div>
+        <div class="win-body">
+          <h3>Zero-Trust Network Architecture — IT/OT Segmentation</h3>
+          <p>Designed the full architecture: topology, IP addressing scheme, and security
+          zones for an enterprise network that had no segmentation, a flat IP space, and
+          no firewall or IDS. The core decision: route IT and OT into separate Layer&nbsp;3
+          networks, turning invisible switched traffic into routed flows a firewall can
+          actually enforce. Deployed dual firewalls (pfSense for IT, Cyberoam for OT), an
+          isolated DMZ, and built 802.1X/FreeRADIUS network access control myself. Directed
+          a 7-person team on the identity and monitoring layers.</p>
+          
+          <div class="tags">
+            <span class="tag">802.1X</span><span class="tag">FreeRADIUS</span>
+            <span class="tag">pfSense</span><span class="tag">segmentation</span>
+            <span class="tag">DMZ</span><span class="tag">IDS/IPS</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="win proj on" style="--d:.13s">
+        <div class="win-bar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 7.5V6a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"></path></svg>
+          <span class="ttl">~/projects/sdn-control-plane</span>
+          <span class="meta status"><span class="led up"></span>MEASURED RESULT</span>
+        </div>
+        <div class="win-body">
+          <h3>SDN Control Plane for a Distributed Network <span class="soft">(M.S. thesis)</span></h3>
+          <p>A centralized SDN-style control plane managing a 17-node network of diffrent distances with full
+          control-plane / data-plane separation: active telemetry benchmarks every node
+          before it's assigned work, a watchdog raises graduated alerts on degraded links,
+          paths are ranked and selected by measured quality, and an EDF scheduler orders
+          operations against deadlines with closed-loop reliability feedback.</p>
+          <span class="metric">10,000 runs: 19.0% task success vs 12.4% state-blind baseline → +6.6 pts</span>
+          <p class="note">Built in Python over a simulated quantum network (NetSquid),
+          a substrate that made the monitoring and scheduling problem unusually demanding.</p>
+          <div class="tags">
+            <span class="tag">SDN</span><span class="tag">Python</span>
+            <span class="tag">telemetry</span><span class="tag">scheduling</span>
+            <span class="tag">closed-loop control</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="win proj on" style="--d:.21s">
+        <div class="win-bar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 7.5V6a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"></path></svg>
+          <span class="ttl">~/projects/can-llm-pipeline</span>
+          <span class="meta status"><span class="led amber"></span>PROOF OF CONCEPT</span>
+        </div>
+        <div class="win-body">
+          <h3>Real-Time Sensor-to-LLM Pipeline over CAN Bus</h3>
+          <p>An end-to-end embedded pipeline crossing four transport layers: a
+          temperature/humidity sensor feeds an Arduino Uno, which frames readings onto a
+          CAN bus (MCP2515 transceivers) to a Raspberry Pi 4 gateway; the Pi decodes the
+          frames and forwards them over Ethernet to a Linux host running a local LLM
+          (Ollama/DeepSeek) that returns context-aware advice in real time, cover the
+          sensor with your hand and the output changes in seconds.</p>
+          <span class="metric">protocol chain: sensor → SPI → CAN → IP → local AI inference</span>
+          <figure class="proj-shot">
+            <img src="assets/can-bench-wiring.webp" width="900" height="1196" loading="lazy" decoding="async" alt="Bench build of the CAN pipeline — Arduino Uno and MCP2515 transceivers wired through a breadboard to a Raspberry Pi 4">
+            <figcaption>the bench — Arduino Uno, dual MCP2515, breadboard, Raspberry Pi 4 gateway</figcaption>
+          </figure>
+          <div class="tags">
+            <span class="tag">CAN bus</span><span class="tag">Arduino</span>
+            <span class="tag">SocketCAN</span><span class="tag">Raspberry Pi</span>
+            <span class="tag">Ollama</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= ws5 · experience ================= -->
+<section id="experience" data-ws="experience">
+  <h2 class="sr-only">Experience</h2>
+  <div class="wrap">
+    <div class="tiles tiles-xp">
+      <div class="win on focus" style="--d:0s">
+        <div class="win-bar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="2.5"></rect><path d="m6.5 9 3.5 3-3.5 3M12.5 15.5H17"></path></svg>
+          <span class="ttl">firas@arch:~/experience</span>
+          <span class="meta">ws·5</span>
+        </div>
+        <div class="win-body">
+          <div class="tl" style="margin-bottom:18px"><span class="p">firas@arch</span>:<span class="path">~/experience</span>$ <span class="cmd">show experience | history</span></div>
+          <div class="xp">
+            <div class="xp-item">
+              <div class="xp-role">Systems &amp; Network Administrator (Graduate Assistant)</div>
+              <div class="xp-org">Grand Valley State University</div>
+              <div class="xp-date">09/2025 – 05/2026 · Allendale, MI</div>
+              <p>• Built a six-playbook Ansible automation suite managing 31 Windows workstations over WinRM — silent unattended software deployment with idempotency checks, bulk file distribution, and network-adapter discovery — reducing lab-wide provisioning from per-machine manual work to a single command.</p>
+              <p>• Automated full VM lifecycle deployment across all workstations: OVA transfer, headless VirtualBox import, bridged-network configuration, and per-machine credential injection via VBoxManage guest control.</p>
+              <p>• Administered a Proxmox VE server (32 TB storage, 128 GB RAM, 16-core) hosting the lab’s virtualization and Ansible control infrastructure, and supported faculty across concurrent courses on a 31-workstation network.</p>
+            </div>
+            <div class="xp-item past">
+              <div class="xp-role">Network &amp; Systems Administrator</div>
+              <div class="xp-org">Placeholder Infrastructures Groupe EVACOM</div>
+              <div class="xp-date">01/2024 – 08/2024 · Tunisia</div>
+              <p>• Designed and led implementation of a zero-trust network architecture, segmenting IT and OT domains behind dedicated firewalls with an isolated DMZ, and building 802.1X/FreeRADIUS network access control across wireless infrastructure.</p>
+              <p>• Installed, configured, and maintained LAN and wireless equipment — 2 Cisco access switches, 3 wireless access points, and a pfSense firewall — provisioning VLANs, DHCP, DNS, and NAT for 24 users and 20+ devices.</p>
+              <p>• Deployed switches and servers across 35 workstations and 4 servers, pulling and testing cable runs, tracing links across floors with cable testers, and mapping switch ports for 30–40 users.</p>
+              <p>• Directed 7 interns across security infrastructure workstreams; responded to network incidents using monitoring tooling (Wazuh, Suricata, Snort) and authored network documentation and standard procedures.</p>
+            </div>
+            <div class="xp-item past">
+              <div class="xp-role">Network Technician</div>
+              <div class="xp-org">Placeholder Infrastructures Groupe EVACOM</div>
+              <div class="xp-date">06/2023 – 12/2023 · Tunisia</div>
+              <p>• Resolved connectivity, hardware, and access issues for 30–40 users and operated virtualized server infrastructure, handling access provisioning and weekly backups.</p>
+            </div>
+            <div class="xp-item past">
+              <div class="xp-role">IT Intern</div>
+              <div class="xp-org">Placeholder Infrastructures Groupe EVACOM</div>
+              <div class="xp-date">01/2023 – 05/2023 · Tunisia</div>
+              <p>• Built an isolated test network on a Dell PowerEdge R360 (Proxmox VE, PERC RAID 10), deploying Security Onion (Suricata, Snort, Zeek, Wazuh, ELK) as a standalone IDS platform and a Windows Server 2016 domain controller (Active Directory, DNS, DHCP, FTP, IIS); validated monitoring with a simulated DoS attack and confirmed detection.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="win imv on" style="--d:.08s">
+          <div class="win-bar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"></rect><circle cx="9" cy="10" r="1.6"></circle><path d="m5 18 5-5 3 3 3-3 3 3"></path></svg>
+            <span class="ttl">imv — rack-pa220-gvsu.webp</span>
+            <span class="meta">2/3</span>
+          </div>
+          <div class="win-body">
+            <figure>
+              <img src="assets/rack-pa220-gvsu.webp" width="1224" height="918" loading="lazy" decoding="async" alt="Palo Alto PA-220 firewall cabled up with link lights on, mounted in the GVSU security-lab rack">
+              <figcaption>in the lab rack — GVSU cyber range</figcaption>
+            </figure>
+          </div>
+        </div>
+        <div class="win imv on" style="--d:.16s">
+          <div class="win-bar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"></rect><circle cx="9" cy="10" r="1.6"></circle><path d="m5 18 5-5 3 3 3-3 3 3"></path></svg>
+            <span class="ttl">imv — servers-evacom.webp</span>
+            <span class="meta">3/3</span>
+          </div>
+          <div class="win-body">
+            <figure>
+              <img src="assets/servers-evacom.webp" width="1600" height="730" loading="lazy" decoding="async" alt="Two Dell PowerEdge rack servers powered on, stacked in the EVACOM server room">
+              <figcaption>Dell PowerEdge rack — EVACOM server room, Tunisia</figcaption>
+            </figure>
+          </div>
+        </div>
+        <p class="vid-callout">when people think networking is <em>only about wifi</em></p>
+        <div class="win mpv on" style="--d:.2s">
+          <div class="win-bar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="2.5"></rect><path d="m10 9 5 3-5 3Z" fill="currentColor"></path></svg>
+            <span class="ttl">mpv — lab-walkthrough.mp4</span>
+            <span class="meta">0:57</span>
+          </div>
+          <div class="win-body">
+            <figure style="margin:0">
+              <video controls="" preload="none" playsinline="" width="540" height="960" poster="assets/lab-walkthrough-poster.webp" aria-label="Raw walkthrough video of the isolated test network build during the IT internship">
+                <source src="assets/lab-walkthrough.mp4" type="video/mp4">
+              </video>
+              <figcaption>raw walkthrough — building the isolated test network (IT internship)</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ws6 · education / certs ================= -->
+<section id="education" data-ws="education">
+  <h2 class="sr-only">Education and certifications</h2>
+  <div class="wrap-nar">
+    <div class="win cmdline on">
+      <div class="win-body">
+        <div class="tl"><span class="p">firas@arch</span>:<span class="path">~/edu</span>$ <span class="cmd">cat education certs</span></div>
+      </div>
+    </div>
+    <div class="duo">
+      <div class="win card on" style="--d:.05s">
+        <div class="win-bar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m12 4 10 5-10 5L2 9Z"></path><path d="M6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5"></path></svg>
+          <span class="ttl">education</span>
+        </div>
+        <div class="win-body">
+          <h4># education</h4>
+          <div class="big">M.S. Cybersecurity</div>
+          <div class="sub">Grand Valley State University — 2026</div>
+          <div class="big" style="margin-top:12px">B.Eng. Network &amp; Systems Engineering</div>
+          <div class="sub">ISSAT Mateur, Tunisia — 2023</div>
+        </div>
+      </div>
+      <div class="win card on" style="--d:.13s">
+        <div class="win-bar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="9" r="5.5"></circle><path d="m8.5 13.5-2 7L12 18l5.5 2.5-2-7"></path></svg>
+          <span class="ttl">certifications</span>
+        </div>
+        <div class="win-body">
+          <h4># certifications</h4>
+          <div class="big">CCNA</div>
+          <div class="sub">Cisco Certified Network Associate</div>
+          <div class="accent" style="margin-top:6px">status: in progress · expected 08/2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ws7 · contact ================= -->
+<footer class="sec" id="contact" data-ws="contact">
+  <h2 class="sr-only">Contact</h2>
+  <div class="wrap-nar">
+    <div class="win on">
+      <div class="win-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"></rect><path d="m3.5 7 8.5 6.5L20.5 7"></path></svg>
+        <span class="ttl">firas@arch:~/contact</span>
+        <span class="meta">ws·7</span>
+      </div>
+      <div class="win-body">
+        <div class="tl" style="margin-bottom:12px"><span class="p">firas@arch</span>:<span class="path">~/contact</span>$ <span class="cmd">contact --all</span></div>
+        <div class="contact-line">
+          <div><span class="k">email:</span> <a href="mailto:firass@mail.gvsu.edu">firass@mail.gvsu.edu</a></div>
+          <div><span class="k">linkedin:</span> <a href="https://www.linkedin.com/in/selmi-firas" rel="noopener">linkedin.com/in/selmi-firas</a></div>
+          <div><span class="k">github:</span> <a href="https://github.com/Selmi-Firas" rel="noopener">github.com/Selmi-Firas</a></div>
+          <div><span class="k">location:</span> Allendale, MI — open to relocation across the US</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</main>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ---------- clock ---------- */
+  var clock = document.getElementById('clock');
+  function tick(){
+    var d = new Date();
+    var hh = String(d.getHours()).padStart(2,'0');
+    var mm = String(d.getMinutes()).padStart(2,'0');
+    clock.textContent = d.toLocaleDateString('en-US',{weekday:'short', month:'short', day:'numeric'}) + '  ' + hh + ':' + mm;
+  }
+  tick(); setInterval(tick, 20000);
+
+  /* ---------- window reveal on scroll (once) ---------- */
+  var wins = Array.prototype.slice.call(document.querySelectorAll('.win'));
+  if('IntersectionObserver' in window){
+    var ro = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('on'); ro.unobserve(e.target); }
+      });
+    },{threshold:0.1, rootMargin:'0px 0px -6% 0px'});
+    wins.forEach(function(w){ ro.observe(w); });
+  } else {
+    wins.forEach(function(w){ w.classList.add('on'); });
+  }
+
+  /* ---------- scrollspy → waybar workspaces ---------- */
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('nav.ws-pill a'));
+  var byWs = {};
+  navLinks.forEach(function(a){ byWs[a.getAttribute('data-ws')] = a; });
+  var sections = Array.prototype.slice.call(document.querySelectorAll('[data-ws]')).filter(function(el){
+    return el.tagName === 'SECTION' || el.tagName === 'FOOTER';
+  });
+  var so = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        navLinks.forEach(function(a){ a.classList.remove('active'); });
+        var a = byWs[e.target.getAttribute('data-ws')];
+        if(a) a.classList.add('active');
+      }
+    });
+  },{rootMargin:'-38% 0px -55% 0px', threshold:0});
+  sections.forEach(function(s){ so.observe(s); });
+
+  /* ---------- focused window ring (nearest viewport center) ---------- */
+  var focused = null, raf = 0;
+  function refocus(){
+    raf = 0;
+    var mid = window.innerHeight / 2, best = null, bd = Infinity;
+    for(var i=0;i<wins.length;i++){
+      var r = wins[i].getBoundingClientRect();
+      if(r.bottom < 0 || r.top > window.innerHeight) continue;
+      var d = Math.abs((r.top + r.bottom)/2 - mid);
+      if(d < bd){ bd = d; best = wins[i]; }
+    }
+    if(best !== focused){
+      if(focused) focused.classList.remove('focus');
+      if(best) best.classList.add('focus');
+      focused = best;
+    }
+  }
+  function onScroll(){ if(!raf) raf = requestAnimationFrame(refocus); }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', onScroll);
+  refocus();
+
+  /* ---------- interactive terminal ---------- */
+  var input = document.getElementById('t-input');
+  var sug = document.getElementById('t-suggest');
+  if(!input) return;
+
+  var sections = ['about','skills','projects','experience','education','contact'];
+  var sel = 0;
+
+  var inputRow = input.closest('.t-input-row');
+  function grow(){
+    input.style.width = Math.max(2, input.value.length + 1) + 'ch';
+    inputRow.classList.toggle('typing', input.value.length > 0);
+  }
+
+  /* "/" palette — filter like shell completion, Tab to autofill */
+  function matches(){
+    if(input.value.charAt(0) !== '/') return null;
+    var q = input.value.slice(1).toLowerCase();
+    return sections.filter(function(s){ return s.indexOf(q) === 0; });
+  }
+  function renderSug(){
+    var m = matches();
+    if(!m || !m.length){ sug.hidden = true; sug.innerHTML = ''; return; }
+    if(sel >= m.length) sel = 0;
+    var q = input.value.slice(1).toLowerCase();
+    sug.innerHTML = m.map(function(s, i){
+      return '<div class="sugi' + (i === sel ? ' sel' : '') + '" role="option"' +
+             (i === sel ? ' aria-selected="true"' : '') + '>' +
+             '<span class="m">/' + s.slice(0, q.length) + '</span>' + s.slice(q.length) + '</div>';
+    }).join('');
+    sug.hidden = false;
+  }
+  input.addEventListener('input', function(){ sel = 0; grow(); renderSug(); });
+  input.addEventListener('focus', function(){ inputRow.classList.add('focused'); });
+  input.addEventListener('blur', function(){ inputRow.classList.remove('focused'); });
+  grow();
+
+  /* the input is only a few px wide — clicking anywhere in the terminal focuses it */
+  var term = document.getElementById('terminal');
+  term.addEventListener('click', function(e){
+    if(e.target.closest && e.target.closest('a')) return; /* let links be links */
+    var s = window.getSelection();
+    if(s && s.type === 'Range') return; /* don't steal a text selection */
+    input.focus({preventScroll:true});
+  });
+  /* desktop: ready to type immediately (skip touch — would pop the keyboard) */
+  if(window.matchMedia && matchMedia('(hover:hover) and (pointer:fine)').matches){
+    input.focus({preventScroll:true});
+  }
+
+  /* No location.hash navigation here: it steals focus and the refocus cancels the
+     smooth scroll. scrollIntoView + silent replaceState = scroll happens, URL updates,
+     and the input never loses focus at all. Scroll speed follows the CSS
+     scroll-behavior (so prefers-reduced-motion jumps instantly). */
+  function goTo(word){
+    if(word === 'help'){
+      window.scrollTo({top:0});
+      return true;
+    }
+    var el = sections.indexOf(word) !== -1 && document.getElementById(word);
+    if(el){
+      setTimeout(function(){
+        try{ history.replaceState(null, '', '#' + word); }catch(err){}
+        el.scrollIntoView({block:'start'});
+      }, 150);
+      return true;
+    }
+    return false;
+  }
+
+  input.addEventListener('keydown', function(e){
+    var m = matches();
+    if(m && m.length){
+      if(e.key === 'Tab'){
+        e.preventDefault();
+        input.value = '/' + m[sel];
+        sel = 0; grow(); renderSug();
+        return;
+      }
+      if(e.key === 'ArrowDown'){ e.preventDefault(); sel = (sel + 1) % m.length; renderSug(); return; }
+      if(e.key === 'ArrowUp'){ e.preventDefault(); sel = (sel - 1 + m.length) % m.length; renderSug(); return; }
+    }
+    if(e.key === 'Escape'){ input.value = ''; sel = 0; grow(); renderSug(); return; }
+    if(e.key !== 'Enter') return;
+
+    var raw = input.value.trim().toLowerCase();
+    var word = raw.charAt(0) === '/' ? raw.slice(1) : raw;
+    /* Enter on a partial "/pro" takes the selected completion */
+    if(raw.charAt(0) === '/' && m && m.length) word = m[sel];
+
+    /* either way, the word is deleted */
+    input.value = ''; sel = 0; grow(); renderSug();
+    if(!word) return;
+    goTo(word); /* unknown words are silently ignored */
+  });
+})();
+</script>
+
+
+</body></html>
